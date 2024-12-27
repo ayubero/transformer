@@ -18,7 +18,7 @@ class LayerNormalization(nn.Module):
         # eps is to prevent dividing by zero or when std is very small
         return self.alpha * (x - mean) / (std + self.eps) + self.bias
 
-class MultiHeadAttentionBlock(nn.Module):
+class MultiHeadAttention(nn.Module):
     def __init__(self, d_model: int, h: int, dropout: float) -> None:
         super().__init__()
         self.d_model = d_model # Embedding vector size
@@ -68,3 +68,33 @@ class MultiHeadAttentionBlock(nn.Module):
         # Multiply by Wo
         # (batch, seq_len, d_model) --> (batch, seq_len, d_model)  
         return self.w_o(x)
+    
+class FeedForwardBlock(nn.Module):
+    def __init__(self, d_model: int, d_ff: int, dropout: float) -> None:
+        super().__init__()
+        self.linear_1 = nn.Linear(d_model, d_ff) # w1 and b1
+        self.dropout = nn.Dropout(dropout)
+        self.linear_2 = nn.Linear(d_ff, d_model) # w2 and b2
+
+    def forward(self, x):
+        # (batch, seq_len, d_model) --> (batch, seq_len, d_ff) --> (batch, seq_len, d_model)
+        return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
+    
+class ResidualConnection(nn.Module):
+    def __init__(self, features: int, dropout: float) -> None:
+        super().__init__()
+        self.dropout = nn.Dropout(dropout)
+        self.norm = LayerNormalization(features)
+
+    def forward(self, x, sublayer):
+        return x + self.dropout(sublayer(self.norm(x)))
+    
+# Projects the embedding into the vocabulary
+class ProjectionLayer(nn.Module):
+    def __init__(self, d_model, vocab_size) -> None:
+        super().__init__()
+        self.proj = nn.Linear(d_model, vocab_size)
+
+    # (batch, seq_len, d_model) --> (batch, seq_len, vocab_size)
+    def forward(self, x) -> None:
+        return self.proj(x)
