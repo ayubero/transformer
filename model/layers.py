@@ -69,7 +69,7 @@ class MultiHeadAttention(nn.Module):
         # (batch, seq_len, d_model) --> (batch, seq_len, d_model)  
         return self.w_o(x)
     
-class FeedForwardBlock(nn.Module):
+class FeedForward(nn.Module):
     def __init__(self, d_model: int, d_ff: int, dropout: float) -> None:
         super().__init__()
         self.linear_1 = nn.Linear(d_model, d_ff) # w1 and b1
