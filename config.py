@@ -1,7 +1,7 @@
 DATASOURCE = 'opus_books'
 LANG_SRC = 'en'
 LANG_TGT = 'es'
-SEQ_LEN = 790
+SEQ_LEN = 350 # Used also to limit sentence length
 D_MODEL = 512
 BATCH_SIZE = 6
 NUM_EPOCHS = 10
