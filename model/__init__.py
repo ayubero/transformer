@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 
-from embeddings import InputEmbeddings, PositionalEncoding
-from blocks import EncoderBlock, Encoder, DecoderBlock, Decoder
-from layers import ProjectionLayer, FeedForward, MultiHeadAttention
+from model.embeddings import InputEmbeddings, PositionalEncoding
+from model.blocks import EncoderBlock, Encoder, DecoderBlock, Decoder
+from model.layers import ProjectionLayer, FeedForward, MultiHeadAttention
 
 class Transformer(nn.Module):
     def __init__(self, encoder: Encoder, decoder: Decoder, encoder_embed: InputEmbeddings, decoder_embed: InputEmbeddings, encoder_pos: PositionalEncoding, decoder_pos: PositionalEncoding, projection_layer: ProjectionLayer) -> None:

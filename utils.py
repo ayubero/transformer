@@ -30,19 +30,23 @@ def get_or_build_tokenizer(ds, lang):
 
 def get_dataset():
     # It only has the train split, so we divide it overselves
-    dataset_raw = load_dataset(f"{config.DATASOURCE}", f"{config.LANG_SRC}-{config.LANG_TGT}", split='train')
+    dataset_raw = load_dataset(f'{config.DATASOURCE}', f'{config.LANG_SRC}-{config.LANG_TGT}', split='train')
 
     # Build tokenizers
     tokenizer_src = get_or_build_tokenizer(dataset_raw, config.LANG_SRC)
     tokenizer_tgt = get_or_build_tokenizer(dataset_raw, config.LANG_TGT)
 
     # Keep 90% for training, 10% for validation
-    train_ds_size = int(0.9 * len(dataset_raw))
-    val_ds_size = len(dataset_raw) - train_ds_size
-    train_dataset_raw, val_dataset_raw = random_split(dataset_raw, [train_ds_size, val_ds_size])
+    train_dataset_size = int(0.9 * len(dataset_raw))
+    val_dataset_size = len(dataset_raw) - train_dataset_size
+    train_dataset_raw, val_dataset_raw = random_split(dataset_raw, [train_dataset_size, val_dataset_size])
 
-    train_ds = BilingualDataset(train_dataset_raw, tokenizer_src, tokenizer_tgt, config.LANG_SRC, config.LANG_TGT, config.SEQ_LEN)
-    val_ds = BilingualDataset(val_dataset_raw, tokenizer_src, tokenizer_tgt, config.LANG_SRC, config.LANG_TGT, config.SEQ_LEN)
+    train_dataset = BilingualDataset(
+        train_dataset_raw, tokenizer_src, tokenizer_tgt, config.LANG_SRC, config.LANG_TGT, config.SEQ_LEN
+    )
+    val_dataset = BilingualDataset(
+        val_dataset_raw, tokenizer_src, tokenizer_tgt, config.LANG_SRC, config.LANG_TGT, config.SEQ_LEN
+    )
 
     # Find the maximum length of each sentence in the source and target sentence
     max_len_src = 0
@@ -57,8 +61,22 @@ def get_dataset():
     print(f'Max length of source sentence: {max_len_src}')
     print(f'Max length of target sentence: {max_len_tgt}')
     
-
-    train_dataloader = DataLoader(train_ds, batch_size=config.BATCH_SIZE, shuffle=True)
-    val_dataloader = DataLoader(val_ds, batch_size=1, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=True)
 
     return train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt
+
+def get_weights_file_path(epoch: str):
+    model_folder = f'{config.DATASOURCE}_{config.MODEL_FOLDER}'
+    model_filename = f'{config.MODEL_PATH}{epoch}.pt'
+    return str(Path('.') / model_folder / model_filename)
+
+# Find the latest weights file in the weights folder
+def latest_weights_file_path():
+    model_folder = f'{config.DATASOURCE}_{config.MODEL_FOLDER}'
+    model_filename = f'{config.MODEL_PATH}*'
+    weights_files = list(Path(model_folder).glob(model_filename))
+    if len(weights_files) == 0:
+        return None
+    weights_files.sort()
+    return str(weights_files[-1])

@@ -1,6 +1,13 @@
-TOKENIZER_FILE = ''
-DATASOURCE = ''
+DATASOURCE = 'opus_books'
 LANG_SRC = 'en'
 LANG_TGT = 'es'
-SEQ_LEN = 1
+SEQ_LEN = 790
+D_MODEL = 512
 BATCH_SIZE = 6
+NUM_EPOCHS = 10
+LR = 10**-4
+MODEL_FOLDER = 'weights'
+MODEL_PATH = 'model_'
+PRELOAD = None
+TOKENIZER_FILE = 'tokenizer_{0}.json'
+EXPERIMENT_NAME = 'runs/model'

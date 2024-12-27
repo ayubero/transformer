@@ -33,7 +33,7 @@ class MultiHeadAttention(nn.Module):
         self.w_o = nn.Linear(d_model, d_model, bias=False) # Wo
         self.dropout = nn.Dropout(dropout)
 
-    def attention(query, key, value, mask, dropout: nn.Dropout):
+    def attention(self, query, key, value, mask, dropout: nn.Dropout):
         d_k = query.shape[-1]
         # Just apply the formula from the paper
         # (batch, h, seq_len, d_k) --> (batch, h, seq_len, seq_len)

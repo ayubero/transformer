@@ -5,3 +5,13 @@ Pytorch implementation of the paper "[Attention is all you need](https://arxiv.o
 ## Dataset
 
 The dataset for the English-Spanish translation task was obtained from https://opus.nlpl.eu. The specific dataset is https://opus.nlpl.eu/Books/en&es/v1/Books
+
+## Set up
+
+Create a virtual environment: `python3 -m venv env`
+
+Activate using `source env/bin/activate`
+
+Install all requirements with `pip install -r requirements.txt`
+
+Train the model by running `python3 train.py`
