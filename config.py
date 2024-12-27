@@ -1,0 +1,6 @@
+TOKENIZER_FILE = ''
+DATASOURCE = ''
+LANG_SRC = 'en'
+LANG_TGT = 'es'
+SEQ_LEN = 1
+BATCH_SIZE = 6
