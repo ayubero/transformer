@@ -14,4 +14,6 @@ Activate using `source env/bin/activate`
 
 Install all requirements with `pip install -r requirements.txt`
 
+Tune the hyperparameters and other settings in config.py
+
 Train the model by running `python3 train.py`
