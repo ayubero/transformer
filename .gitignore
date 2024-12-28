@@ -1,5 +1,6 @@
 __pycache__
 env
-runs
-events.out*
+runs/model/
+events*
 *.pt
+*.json

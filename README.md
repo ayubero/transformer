@@ -4,7 +4,7 @@ Pytorch implementation of the paper "[Attention is all you need](https://arxiv.o
 
 ## Dataset
 
-The dataset for the English-Spanish translation task was obtained from https://opus.nlpl.eu. The specific dataset is https://opus.nlpl.eu/Books/en&es/v1/Books
+The dataset for the English-Spanish translation task was obtained from https://opus.nlpl.eu. The specific dataset is https://opus.nlpl.eu/Books/en&es/v1/Books, but the HuggingFace version can be used.
 
 ## Set up
 
