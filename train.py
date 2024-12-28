@@ -10,6 +10,7 @@ from tqdm import tqdm
 import config
 from model import build_transformer
 from utils import get_dataset, get_weights_file_path, latest_weights_file_path
+from validation import run_validation
 
 def train_model():
     # Define the device
@@ -88,7 +89,7 @@ def train_model():
             global_step += 1
 
         # Run validation at the end of every epoch
-        #run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, config.SEQ_LEN, device, lambda msg: batch_iterator.write(msg), global_step, writer)
+        run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, config.SEQ_LEN, device, lambda msg: batch_iterator.write(msg), global_step, writer)
 
         # Save the model at the end of every epoch
         model_filename = get_weights_file_path(f'{epoch:02d}')

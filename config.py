@@ -8,6 +8,6 @@ NUM_EPOCHS = 10
 LR = 10**-4
 MODEL_FOLDER = 'weights'
 MODEL_PATH = 'model_'
-PRELOAD = None
+PRELOAD = None #'latest'
 TOKENIZER_FILE = 'tokenizer_{0}.json'
 EXPERIMENT_NAME = 'runs/model'

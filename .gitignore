@@ -1,2 +1,5 @@
 __pycache__
 env
+runs
+events.out*
+*.pt

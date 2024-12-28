@@ -6,3 +6,4 @@ torchmetrics==1.0.3
 torchtext==0.15.2
 tqdm==4.67.1
 wandb==0.15.9
+numpy==1.24.4
