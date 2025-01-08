@@ -30,7 +30,7 @@ def get_or_build_tokenizer(dataset, lang):
 
 def get_dataset():
     # It only has the train split, so we divide it overselves
-    dataset_raw = load_dataset(f'{config.DATASOURCE}', f'{config.LANG_SRC}-{config.LANG_TGT}', split='train')
+    dataset_raw = load_dataset(f'{config.DATASOURCE}', f'{config.LANG_TGT}-{config.LANG_SRC}', split='train')
 
     # Build tokenizers
     tokenizer_src = get_or_build_tokenizer(dataset_raw, config.LANG_SRC)

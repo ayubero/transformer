@@ -1,13 +1,13 @@
 DATASOURCE = 'opus_books'
-LANG_SRC = 'en'
-LANG_TGT = 'es'
+LANG_SRC = 'es'
+LANG_TGT = 'en'
 SEQ_LEN = 350 # Used also to limit sentence length
 D_MODEL = 512
 BATCH_SIZE = 6
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 LR = 10**-4
 MODEL_FOLDER = 'weights'
 MODEL_PATH = 'model_'
-PRELOAD = None #'latest'
+PRELOAD = 'latest' # None
 TOKENIZER_FILE = 'tokenizer_{0}.json'
 EXPERIMENT_NAME = 'runs/model'

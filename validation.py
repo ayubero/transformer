@@ -1,8 +1,13 @@
 import os
 import torch
-import torchmetrics
+import torchmetrics.text as torchmetrics
+from pathlib import Path
+from tqdm import tqdm
 
+import config
 from dataset import causal_mask
+from model import build_transformer
+from utils import get_dataset, get_weights_file_path, latest_weights_file_path
 
 def greedy_decode(model, source, source_mask, tokenizer_src, tokenizer_tgt, max_len, device):
     sos_idx = tokenizer_tgt.token_to_id('[SOS]')
@@ -79,8 +84,8 @@ def run_validation(model, validation_dataset, tokenizer_src, tokenizer_tgt, max_
             if count == num_examples:
                 print_msg('-'*console_width)
                 break
-    
-    if writer:
+
+    '''if writer:
         # Evaluate the character error rate
         # Compute the char error rate 
         metric = torchmetrics.CharErrorRate()
@@ -98,4 +103,56 @@ def run_validation(model, validation_dataset, tokenizer_src, tokenizer_tgt, max_
         metric = torchmetrics.BLEUScore()
         bleu = metric(predicted, expected)
         writer.add_scalar('validation BLEU', bleu, global_step)
-        writer.flush()
+        writer.flush()'''
+    
+    metric = torchmetrics.CharErrorRate()
+    cer = metric(predicted, expected)
+    print_msg(f"{f'Validation CER:':>15} {cer}")
+    print_msg('-'*console_width)
+
+    # Compute the word error rate
+    metric = torchmetrics.WordErrorRate()
+    wer = metric(predicted, expected)
+    print_msg(f"{f'Validation WER:':>15} {wer}")
+    print_msg('-'*console_width)
+
+    # Compute the BLEU metric
+    metric = torchmetrics.BLEUScore()
+    bleu = metric(predicted, expected)
+    print_msg(f"{f'Validation BLEU:':>15} {bleu}")
+    print_msg('-'*console_width)
+
+if __name__ == '__main__':
+    device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.has_mps or torch.backends.mps.is_available() else 'cpu'
+    print('Using device:', device)
+    device = torch.device(device)
+
+    # Make sure the weights folder exists
+    Path(f'{config.DATASOURCE}_{config.MODEL_FOLDER}').mkdir(parents=True, exist_ok=True)
+
+    train_dataloader, val_dataloader, tokenizer_src, tokenizer_tgt = get_dataset()
+    model = build_transformer(
+        tokenizer_src.get_vocab_size(), 
+        tokenizer_tgt.get_vocab_size(),
+        config.SEQ_LEN, 
+        config.SEQ_LEN, 
+        d_model=config.D_MODEL
+    ).to(device)
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.LR, eps=1e-9)
+    initial_epoch = 0
+    global_step = 0
+    preload = config.PRELOAD
+    model_filename = latest_weights_file_path() if preload == 'latest' else get_weights_file_path(preload) if preload else None
+    batch_iterator = tqdm(val_dataloader, desc=f'Processing validation dataset')
+    if model_filename:
+        print(f'Preloading model {model_filename}')
+        state = torch.load(model_filename)
+        model.load_state_dict(state['model_state_dict'])
+        initial_epoch = state['epoch'] + 1
+        optimizer.load_state_dict(state['optimizer_state_dict'])
+        global_step = state['global_step']
+
+        run_validation(model, val_dataloader, tokenizer_src, tokenizer_tgt, config.SEQ_LEN, device, lambda msg: batch_iterator.write(msg), global_step, None,num_examples=3)
+    else:
+        print('No model to preload, train a model first')
